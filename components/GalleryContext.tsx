@@ -14,10 +14,13 @@ type RestoreTarget = "trigger" | "form";
 
 type GalleryContextValue = {
   selectedId: string | null;
+  roomId: string | null;
   interestId: string;
   dossierNonce: number;
   openInspection: (id: string, trigger: HTMLElement | null) => void;
   closeInspection: () => void;
+  openRoom: (id: string) => void;
+  closeRoom: () => void;
   setInterestId: (id: string) => void;
   requestDossier: (id: string) => void;
   consumeRestore: () => { target: RestoreTarget; trigger: HTMLElement | null };
@@ -27,6 +30,7 @@ const GalleryContext = createContext<GalleryContextValue | null>(null);
 
 export function GalleryProvider({ children }: { children: React.ReactNode }) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [roomId, setRoomId] = useState<string | null>(null);
   const [interestId, setInterestId] = useState(artworks[0]?.id ?? "");
   const [dossierNonce, setDossierNonce] = useState(0);
   const triggerRef = useRef<HTMLElement | null>(null);
@@ -41,6 +45,14 @@ export function GalleryProvider({ children }: { children: React.ReactNode }) {
   const closeInspection = useCallback(() => {
     restoreRef.current = "trigger";
     setSelectedId(null);
+  }, []);
+
+  const openRoom = useCallback((id: string) => {
+    setRoomId(id);
+  }, []);
+
+  const closeRoom = useCallback(() => {
+    setRoomId(null);
   }, []);
 
   const requestDossier = useCallback((id: string) => {
@@ -65,20 +77,26 @@ export function GalleryProvider({ children }: { children: React.ReactNode }) {
   const value = useMemo(
     () => ({
       selectedId,
+      roomId,
       interestId,
       dossierNonce,
       openInspection,
       closeInspection,
+      openRoom,
+      closeRoom,
       setInterestId,
       requestDossier,
       consumeRestore,
     }),
     [
       selectedId,
+      roomId,
       interestId,
       dossierNonce,
       openInspection,
       closeInspection,
+      openRoom,
+      closeRoom,
       requestDossier,
       consumeRestore,
     ],

@@ -1,8 +1,10 @@
 "use client";
 
 import { ArtworkCanvasSlot } from "@/components/ArtworkCanvasSlot";
+import { useCart } from "@/components/CartContext";
 import { useGallery } from "@/components/GalleryContext";
 import { artworks, formatDimensions, type ArtworkCategory } from "@/data/artworks";
+import { formatPrice } from "@/lib/money";
 import { salonEase, salonTransition } from "@/lib/motion";
 import { LayoutGroup, motion, useReducedMotion } from "framer-motion";
 import { useState } from "react";
@@ -29,7 +31,8 @@ const spans = [
 
 export function Collection() {
   const reduce = useReducedMotion();
-  const { openInspection, requestDossier } = useGallery();
+  const { openInspection, requestDossier, openRoom } = useGallery();
+  const { add, lines } = useCart();
   const [filter, setFilter] = useState<FilterId>("all");
   const visible = artworks.filter((work) => filter === "all" || work.category === filter);
 
@@ -130,6 +133,9 @@ export function Collection() {
                     <br />
                     {formatDimensions(work)}
                   </p>
+                  <p className={`mt-3 font-sans text-[12px] uppercase tracking-[0.22em] ${light ? "text-mahogany" : "text-brass"}`}>
+                    {formatPrice(work.price)}
+                  </p>
                   <div className="mt-6 flex flex-wrap gap-3 opacity-100 transition-opacity duration-700 ease-salon [@media(hover:hover)]:lg:opacity-0 [@media(hover:hover)]:lg:group-focus-within:opacity-100 [@media(hover:hover)]:lg:group-hover:opacity-100">
                     <button
                       type="button"
@@ -148,6 +154,24 @@ export function Collection() {
                       }`}
                     >
                       Request Dossier
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => openRoom(work.id)}
+                      className={`border px-3 py-2 font-sans text-[11px] uppercase tracking-[0.22em] ${
+                        light ? "border-mahogany/40 text-navy" : "border-hairline text-parchment"
+                      }`}
+                    >
+                      View in a Room
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => add(work.id)}
+                      className={`border px-3 py-2 font-sans text-[11px] uppercase tracking-[0.22em] ${
+                        light ? "border-mahogany/40 text-navy" : "border-brass text-parchment"
+                      }`}
+                    >
+                      {lines.some((line) => line.id === work.id) ? "Add another" : "Add to cart"}
                     </button>
                   </div>
                 </div>

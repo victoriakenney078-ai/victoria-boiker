@@ -1,4 +1,5 @@
 import { Collection } from "@/components/Collection";
+import { LiveChat } from "@/components/LiveChat";
 import { Concierge } from "@/components/Concierge";
 import { Footer } from "@/components/Footer";
 import { GalleryProvider } from "@/components/GalleryContext";
@@ -6,6 +7,7 @@ import { Hero } from "@/components/Hero";
 import { InspectionModal } from "@/components/InspectionModal";
 import { Navbar } from "@/components/Navbar";
 import { Provenance } from "@/components/Provenance";
+import { RoomView } from "@/components/RoomView";
 
 export default function Page() {
   return (
@@ -25,6 +27,8 @@ export default function Page() {
       </main>
       <Footer />
       <InspectionModal />
+      <RoomView />
+      <LiveChat />
     </GalleryProvider>
   );
 }

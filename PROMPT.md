@@ -97,8 +97,10 @@ Done when `npm run build` succeeds and the page can be clicked through: filter c
 | The Profile | the-profile.png | овал | Portraits |
 | The Walk | the-walk.png | круг | Scenes |
 
-Golden Descent стоит в герое. У кругов и овала с фото снят белый фон, остаётся только холст. Годы и размеры в сантиметрах не выдуманы: на карточке указана форма холста. Фильтры: All Works, Horses, Portraits, Scenes. Старых фильтров Old Masters, 19th Century и Sculpture & Objects нет.
+На первом экране портрет Victoria Boiker с подписью founder and author. Golden Descent остаётся в коллекции. У кругов и овала с фото снят белый фон, остаётся только холст. Годы и размеры в сантиметрах не выдуманы: на карточке указана форма холста. Фильтры: All Works, Horses, Portraits, Scenes. Старых фильтров Old Masters, 19th Century и Sculpture & Objects нет.
 
-Вход и регистрация только на фронтенде. Без сессии страница галереи не показывается, открывается экран Sign in / Register. Аккаунты лежат в localStorage этого браузера (`victoria-boiker-accounts`, `victoria-boiker-session`). Сервера авторизации нет. Выход — Sign out в меню.
+Вход и регистрация только в браузере. Кнопки Sign in стоят в шапке, в мобильном меню и на первом экране. Коллекцию можно смотреть без входа. Заказ требует сессии. Аккаунты лежат в localStorage (`victoria-boiker-accounts`, `victoria-boiker-session`).
+
+На главной есть живой чат. Клиент хранит переписку и при каждом вопросе отправляет её целиком, вместе с более ранними репликами. Корзина принимает работы по указанной цене и оформляет заказ в этом браузере.
 
 Локальный запуск: `npm install`, затем `npm run dev`. Если порт 3000 занят, `npx next dev -p 3001`.

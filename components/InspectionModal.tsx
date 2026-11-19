@@ -1,8 +1,10 @@
 "use client";
 
 import { ArtworkCanvasSlot } from "@/components/ArtworkCanvasSlot";
+import { useCart } from "@/components/CartContext";
 import { useGallery } from "@/components/GalleryContext";
 import { formatDimensions, getArtwork } from "@/data/artworks";
+import { formatPrice } from "@/lib/money";
 import { salonTransition } from "@/lib/motion";
 import { motion, useReducedMotion } from "framer-motion";
 import { useEffect, useId, useRef } from "react";
@@ -12,7 +14,8 @@ const focusable =
 
 export function InspectionModal() {
   const reduce = useReducedMotion();
-  const { selectedId, closeInspection, requestDossier, consumeRestore } = useGallery();
+  const { selectedId, closeInspection, requestDossier, consumeRestore, openRoom } = useGallery();
+  const { add, lines } = useCart();
   const dialogRef = useRef<HTMLDivElement>(null);
   const titleId = useId();
   const work = selectedId ? getArtwork(selectedId) : null;
@@ -122,6 +125,8 @@ export function InspectionModal() {
             {work.medium}
             <br />
             {formatDimensions(work)}
+            <br />
+            {formatPrice(work.price)}
           </p>
           <h3 className="mt-10 font-sans text-[11px] uppercase tracking-[0.22em] text-brass">Provenance</h3>
           <ol className="mt-4 space-y-4 border-l border-brass/50 pl-4">
@@ -134,13 +139,29 @@ export function InspectionModal() {
           </ol>
           <h3 className="mt-10 font-sans text-[11px] uppercase tracking-[0.22em] text-brass">Condition</h3>
           <p className="mt-4 font-sans text-sm font-light leading-6 text-ink">{work.condition}</p>
-          <button
-            type="button"
-            onClick={() => requestDossier(work.id)}
-            className="mt-10 border border-brass px-5 py-3 font-sans text-[11px] uppercase tracking-[0.22em] text-parchment transition-colors duration-700 ease-salon hover:bg-mahogany"
-          >
-            Request this dossier
-          </button>
+          <div className="mt-10 flex flex-wrap gap-3">
+            <button
+              type="button"
+              onClick={() => requestDossier(work.id)}
+              className="border border-brass px-5 py-3 font-sans text-[11px] uppercase tracking-[0.22em] text-parchment transition-colors duration-700 ease-salon hover:bg-mahogany"
+            >
+              Request this dossier
+            </button>
+            <button
+              type="button"
+              onClick={() => openRoom(work.id)}
+              className="border border-brass px-5 py-3 font-sans text-[11px] uppercase tracking-[0.22em] text-parchment transition-colors duration-700 ease-salon hover:bg-mahogany"
+            >
+              View in a Room
+            </button>
+            <button
+              type="button"
+              onClick={() => add(work.id)}
+              className="border border-brass px-5 py-3 font-sans text-[11px] uppercase tracking-[0.22em] text-parchment transition-colors duration-700 ease-salon hover:bg-mahogany"
+            >
+              {lines.some((line) => line.id === work.id) ? "Add another" : "Add to cart"}
+            </button>
+          </div>
         </aside>
       </div>
     </motion.div>

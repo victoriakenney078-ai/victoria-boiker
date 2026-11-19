@@ -85,7 +85,7 @@ export function AuthScreen({ onEnter }: { onEnter: (email: string) => void }) {
           {mode === "sign-in" ? "Enter the gallery" : "Request a name"}
         </h1>
         <p className="mt-5 font-sans text-[15px] font-light leading-7 text-ink">
-          The collection is shown only to those who have signed in.
+          Sign in to place an order. The account stays in this browser.
         </p>
         <div className="mt-10 flex gap-8" role="tablist" aria-label="Account">
           {(

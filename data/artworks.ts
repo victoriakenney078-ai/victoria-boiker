@@ -16,6 +16,7 @@ export type Artwork = {
   dimensionsCm: string;
   dimensionsIn: string;
   category: ArtworkCategory;
+  price: number;
   textureUrl: string;
   frameStyle: FrameStyle;
   aspectRatio: number;
@@ -34,6 +35,7 @@ export const artworks: Artwork[] = [
     dimensionsCm: "Vertical canvas",
     dimensionsIn: "",
     category: "horses",
+    price: 18000,
     textureUrl: "/artworks/golden-descent.jpg",
     frameStyle: "mahogany",
     aspectRatio: 692 / 1024,
@@ -54,6 +56,7 @@ export const artworks: Artwork[] = [
     dimensionsCm: "Square canvas",
     dimensionsIn: "",
     category: "horses",
+    price: 14500,
     textureUrl: "/artworks/winged-horse.jpg",
     frameStyle: "ebonized",
     aspectRatio: 980 / 1024,
@@ -73,6 +76,7 @@ export const artworks: Artwork[] = [
     dimensionsCm: "Vertical canvas",
     dimensionsIn: "",
     category: "portraits",
+    price: 16000,
     textureUrl: "/artworks/green-eye.jpg",
     frameStyle: "brass",
     aspectRatio: 533 / 1024,
@@ -92,6 +96,7 @@ export const artworks: Artwork[] = [
     dimensionsCm: "Horizontal canvas",
     dimensionsIn: "",
     category: "horses",
+    price: 12500,
     textureUrl: "/artworks/horse-and-ships.jpg",
     frameStyle: "mahogany",
     aspectRatio: 809 / 1024,
@@ -111,6 +116,7 @@ export const artworks: Artwork[] = [
     dimensionsCm: "Round canvas",
     dimensionsIn: "",
     category: "portraits",
+    price: 9800,
     textureUrl: "/artworks/two-faces.png",
     frameStyle: "ebonized",
     aspectRatio: 1,
@@ -130,6 +136,7 @@ export const artworks: Artwork[] = [
     dimensionsCm: "Oval canvas",
     dimensionsIn: "",
     category: "portraits",
+    price: 11200,
     textureUrl: "/artworks/the-profile.png",
     frameStyle: "brass",
     aspectRatio: 659 / 998,
@@ -149,6 +156,7 @@ export const artworks: Artwork[] = [
     dimensionsCm: "Round canvas",
     dimensionsIn: "",
     category: "scenes",
+    price: 8600,
     textureUrl: "/artworks/the-walk.png",
     frameStyle: "mahogany",
     aspectRatio: 1,

@@ -1,4 +1,6 @@
 import { AuthGate } from "@/components/AuthGate";
+import { CartDrawer } from "@/components/CartDrawer";
+import { CartProvider } from "@/components/CartContext";
 import { Grain } from "@/components/Grain";
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Plus_Jakarta_Sans } from "next/font/google";
@@ -30,7 +32,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${display.variable} ${sans.variable}`}>
       <body className="overflow-x-hidden bg-navy font-sans text-ink antialiased">
         <Grain />
-        <AuthGate>{children}</AuthGate>
+        <AuthGate>
+          <CartProvider>
+            {children}
+            <CartDrawer />
+          </CartProvider>
+        </AuthGate>
       </body>
     </html>
   );

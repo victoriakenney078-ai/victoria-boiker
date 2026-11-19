@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuth } from "@/components/AuthGate";
+import { useCart } from "@/components/CartContext";
 import { useGallery } from "@/components/GalleryContext";
 import { salonTransition } from "@/lib/motion";
 import { motion, useReducedMotion } from "framer-motion";
@@ -18,7 +19,8 @@ const focusable =
 
 export function Navbar() {
   const { selectedId } = useGallery();
-  const { signOut } = useAuth();
+  const { email, ready, signOut, openSignIn } = useAuth();
+  const { count, setOpen: setCartOpen } = useCart();
   const reduce = useReducedMotion();
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -75,7 +77,7 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-hairline bg-navy/85 backdrop-blur-md">
-      <div className="mx-auto flex max-w-salon items-center justify-between gap-6 px-5 py-4 sm:px-8 lg:px-14">
+      <div className="mx-auto flex max-w-salon flex-wrap items-center justify-between gap-x-6 gap-y-3 px-5 py-4 sm:px-8 lg:px-14">
         <a href="#top" className="min-w-0">
           <span className="block font-display text-[1.15rem] font-medium leading-none tracking-[-0.025em] text-parchment sm:text-[1.35rem]">
             VICTORIA BOIKER
@@ -94,12 +96,29 @@ export function Navbar() {
               {link.label}
             </a>
           ))}
+          {ready && email ? (
+            <button
+              type="button"
+              onClick={signOut}
+              className="font-sans text-[11px] uppercase tracking-[0.22em] text-parchment transition-colors duration-700 ease-salon hover:text-brass"
+            >
+              Sign out
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={openSignIn}
+              className="border border-brass px-4 py-2 font-sans text-[11px] uppercase tracking-[0.22em] text-parchment transition-colors duration-700 ease-salon hover:bg-mahogany-mid"
+            >
+              Sign in
+            </button>
+          )}
           <button
             type="button"
-            onClick={signOut}
-            className="font-sans text-[11px] uppercase tracking-[0.22em] text-parchment transition-colors duration-700 ease-salon hover:text-brass"
+            onClick={() => setCartOpen(true)}
+            className="border border-hairline px-4 py-2 font-sans text-[11px] uppercase tracking-[0.22em] text-parchment"
           >
-            Sign out
+            Cart{count > 0 ? ` ${count}` : ""}
           </button>
           <a
             href="#advisory"
@@ -108,16 +127,34 @@ export function Navbar() {
             Private Viewing
           </a>
         </nav>
+        <div className="flex shrink-0 items-center gap-3 lg:hidden">
+          {ready && !email ? (
+            <button
+              type="button"
+              onClick={openSignIn}
+              className="border border-brass px-3 py-2 font-sans text-[11px] uppercase tracking-[0.22em] text-parchment"
+            >
+              Sign in
+            </button>
+          ) : null}
+          <button
+            type="button"
+            onClick={() => setCartOpen(true)}
+            className="border border-hairline px-3 py-2 font-sans text-[11px] uppercase tracking-[0.22em] text-parchment"
+          >
+            Cart{count > 0 ? ` ${count}` : ""}
+          </button>
         <button
           ref={menuButtonRef}
           type="button"
-          className="border border-hairline px-3 py-2 font-sans text-[11px] uppercase tracking-[0.22em] text-parchment lg:hidden"
+          className="border border-hairline px-3 py-2 font-sans text-[11px] uppercase tracking-[0.22em] text-parchment"
           aria-expanded={open}
           aria-controls="mobile-navigation"
           onClick={() => setOpen((value) => !value)}
         >
           {open ? "Close" : "Menu"}
         </button>
+        </div>
       </div>
       {open && mounted
         ? createPortal(
@@ -156,15 +193,38 @@ export function Navbar() {
               </a>
             ))}
           </nav>
+          {ready && email ? (
+            <button
+              type="button"
+              onClick={() => {
+                setOpen(false);
+                signOut();
+              }}
+              className="mt-10 w-fit font-sans text-[11px] uppercase tracking-[0.22em] text-parchment"
+            >
+              Sign out
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => {
+                setOpen(false);
+                openSignIn();
+              }}
+              className="mt-10 w-fit border border-brass px-5 py-3 font-sans text-[11px] uppercase tracking-[0.22em] text-parchment"
+            >
+              Sign in
+            </button>
+          )}
           <button
             type="button"
             onClick={() => {
               setOpen(false);
-              signOut();
+              setCartOpen(true);
             }}
-            className="mt-10 w-fit font-sans text-[11px] uppercase tracking-[0.22em] text-parchment"
+            className="mt-6 w-fit border border-hairline px-5 py-3 font-sans text-[11px] uppercase tracking-[0.22em] text-parchment"
           >
-            Sign out
+            Cart{count > 0 ? ` ${count}` : ""}
           </button>
           <a
             href="#advisory"
