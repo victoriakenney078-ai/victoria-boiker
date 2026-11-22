@@ -30,7 +30,7 @@ npx next dev -p 3001
 
 Проект: **Workers & Pages** → `victoria-boiker` (см. [`wrangler.toml`](wrangler.toml)). Next.js собирается через [`@cloudflare/next-on-pages`](https://github.com/cloudflare/next-on-pages); маршрут `/api/chat` на `runtime = edge`.
 
-**Сборка в Cloudflare (рекомендуется):** подключите репозиторий `victoriakenney078-ai/victoria-boiker` → Build command `npm run build:cf`, output directory `.vercel/output/static`, compatibility flag `nodejs_compat`. Задайте переменные как в [`.dev.vars.example`](.dev.vars.example) (`XAI_API_KEY` — encrypted).
+**Сборка в Cloudflare (рекомендуется):** подключите репозиторий `victoriakenney078-ai/victoria-boiker` → Build command `npm run build:cf`, output directory `.vercel/output/static`, compatibility flag `nodejs_compat`. Задайте переменные как в [`.dev.vars.example`](.dev.vars.example) (`XAI_API_KEY` — encrypted). Каталог сборки и переменные задаются в проекте Pages. В `wrangler.toml` нет `pages_build_output_dir`: с этой строкой файл заменяет настройки проекта и `next build` не видит переменные Supabase.
 
 **Локально:** `npm run dev` без изменений. Полная сборка `build:cf` на Windows требует WSL/bash; иначе пуш в git и сборка на Cloudflare.
 

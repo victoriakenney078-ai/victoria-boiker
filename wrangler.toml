@@ -2,4 +2,6 @@
 name = "victoria-boiker"
 compatibility_date = "2024-11-22"
 compatibility_flags = ["nodejs_compat"]
-pages_build_output_dir = ".vercel/output/static"
+# Output directory stays on the Pages project. A pages_build_output_dir
+# here would make this file the only config and drop the dashboard env vars
+# that next build needs.
