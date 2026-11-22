@@ -1,66 +1,50 @@
+import { supabase } from "@/lib/supabase";
+
 export type Account = {
   name: string;
   email: string;
   password: string;
 };
 
-const ACCOUNTS = "victoria-boiker-accounts";
-const SESSION = "victoria-boiker-session";
+export type AuthResult =
+  | { ok: true; email: string }
+  | { ok: false; reason: "exists" | "confirm" | "invalid" | "failed" };
 
-function readAccounts(): Account[] {
-  try {
-    const raw = localStorage.getItem(ACCOUNTS);
-    if (!raw) return [];
-    const parsed: unknown = JSON.parse(raw);
-    if (!Array.isArray(parsed)) return [];
-    return parsed.filter(
-      (item): item is Account =>
-        Boolean(item) &&
-        typeof item === "object" &&
-        typeof (item as Account).name === "string" &&
-        typeof (item as Account).email === "string" &&
-        typeof (item as Account).password === "string",
-    );
-  } catch {
-    return [];
-  }
-}
-
-function writeAccounts(accounts: Account[]) {
-  localStorage.setItem(ACCOUNTS, JSON.stringify(accounts));
-}
-
-export function readSession(): string | null {
-  const email = localStorage.getItem(SESSION);
-  if (!email) return null;
-  const known = readAccounts().some((account) => account.email === email);
-  if (!known) {
-    localStorage.removeItem(SESSION);
-    return null;
-  }
-  return email;
-}
-
-export function registerAccount(account: Account): { ok: true } | { ok: false; reason: "exists" } {
-  const accounts = readAccounts();
+export async function registerAccount(account: Account): Promise<AuthResult> {
   const email = account.email.trim().toLowerCase();
-  if (accounts.some((item) => item.email === email)) {
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password: account.password,
+    options: { data: { gallery_name: account.name.trim() } },
+  });
+  if (error) {
+    if (/already|registered/i.test(error.message)) return { ok: false, reason: "exists" };
+    return { ok: false, reason: "failed" };
+  }
+  if (data.user && data.user.identities && data.user.identities.length === 0) {
     return { ok: false, reason: "exists" };
   }
-  accounts.push({ name: account.name.trim(), email, password: account.password });
-  writeAccounts(accounts);
-  localStorage.setItem(SESSION, email);
-  return { ok: true };
+  const sessionEmail = data.session?.user.email;
+  if (!sessionEmail) return { ok: false, reason: "confirm" };
+  return { ok: true, email: sessionEmail };
 }
 
-export function signInAccount(email: string, password: string): { ok: true; email: string } | { ok: false } {
-  const normalized = email.trim().toLowerCase();
-  const match = readAccounts().find((account) => account.email === normalized && account.password === password);
-  if (!match) return { ok: false };
-  localStorage.setItem(SESSION, match.email);
-  return { ok: true, email: match.email };
+export async function signInAccount(email: string, password: string): Promise<AuthResult> {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email: email.trim().toLowerCase(),
+    password,
+  });
+  if (error || !data.session?.user.email) return { ok: false, reason: "invalid" };
+  return { ok: true, email: data.session.user.email };
 }
 
-export function clearSession() {
-  localStorage.removeItem(SESSION);
+export async function clearSession() {
+  await supabase.auth.signOut();
+}
+
+export function watchSession(onEmail: (email: string | null) => void) {
+  const { data } = supabase.auth.onAuthStateChange((_event, session) => {
+    onEmail(session?.user.email ?? null);
+  });
+  return () => data.subscription.unsubscribe();
 }

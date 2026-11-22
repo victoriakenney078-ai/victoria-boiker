@@ -4,9 +4,9 @@ import { useAuth } from "@/components/AuthGate";
 import { useCart } from "@/components/CartContext";
 import { getArtwork } from "@/data/artworks";
 import { formatPrice } from "@/lib/money";
+import { supabase } from "@/lib/supabase";
 import { FormEvent, useEffect, useId, useState } from "react";
 
-const ORDERS = "victoria-boiker-orders";
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const fieldClass =
@@ -47,7 +47,7 @@ export function CartDrawer() {
     };
   }, [open, setOpen]);
 
-  function placeOrder(event: FormEvent<HTMLFormElement>) {
+  async function placeOrder(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!email) {
       setError("Sign in to place this order.");
@@ -59,11 +59,18 @@ export function CartDrawer() {
       setError("A name, a complete email, and a city are required.");
       return;
     }
+    const { data: sessionData } = await supabase.auth.getSession();
+    const userId = sessionData.session?.user.id;
+    if (!userId) {
+      setError("Sign in to place this order.");
+      openSignIn();
+      return;
+    }
     const nextReference = `VB-${Date.now().toString(36).toUpperCase()}`;
-    const order = {
+    const { error: insertError } = await supabase.from("gallery_orders").insert({
+      user_id: userId,
       reference: nextReference,
-      account: email,
-      name: name.trim(),
+      customer_name: name.trim(),
       mail: mail.trim(),
       city: city.trim(),
       note: note.trim(),
@@ -74,15 +81,10 @@ export function CartDrawer() {
         price: item.work.price,
       })),
       total,
-      at: new Date().toISOString(),
-    };
-    try {
-      const existing = JSON.parse(localStorage.getItem(ORDERS) ?? "[]") as unknown[];
-      const list = Array.isArray(existing) ? existing : [];
-      list.push(order);
-      localStorage.setItem(ORDERS, JSON.stringify(list));
-    } catch {
-      localStorage.setItem(ORDERS, JSON.stringify([order]));
+    });
+    if (insertError) {
+      setError("The order could not be saved. Try again.");
+      return;
     }
     clear();
     setNote("");

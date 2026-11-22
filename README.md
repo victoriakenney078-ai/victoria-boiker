@@ -1,6 +1,6 @@
 # Victoria Boiker
 
-Личная галерея. Сайт показывает семь работ. Вход, корзина и чат живут в браузере.
+Личная галерея. Сайт показывает семь работ. Вход и заказы идут через Supabase. Корзина и чат остаются в браузере.
 
 Стек: Next.js 14, React 18, TypeScript, Tailwind CSS, Framer Motion. Одна страница. Сервера и базы данных нет.
 
@@ -19,16 +19,30 @@ npx next dev -p 3001
 
 Сборка: `npm run build`.
 
+## Переменные окружения
+
+Скопируйте [`env.example`](env.example) в `.env.local` и заполните значения. Файл `.env.local` в git не попадает.
+
+- `NEXT_PUBLIC_SUPABASE_URL` и `NEXT_PUBLIC_SUPABASE_ANON_KEY` — проект Supabase (в браузере).
+- `XAI_API_KEY` или `OPENAI_API_KEY` — необязательно, только на сервере, для ответов Live chat.
+
+## Деплой (Cloudflare Pages)
+
+Проект: **Workers & Pages** → `victoria-boiker` (см. [`wrangler.toml`](wrangler.toml)). Next.js собирается через [`@cloudflare/next-on-pages`](https://github.com/cloudflare/next-on-pages); маршрут `/api/chat` на `runtime = edge`.
+
+**Сборка в Cloudflare (рекомендуется):** подключите репозиторий `victoriakenney078-ai/victoria-boiker` → Build command `npm run build:cf`, output directory `.vercel/output/static`, compatibility flag `nodejs_compat`. Задайте переменные как в [`.dev.vars.example`](.dev.vars.example) (`XAI_API_KEY` — encrypted).
+
+**Локально:** `npm run dev` без изменений. Полная сборка `build:cf` на Windows требует WSL/bash; иначе пуш в git и сборка на Cloudflare.
+
+**CLI:** `npx wrangler login`, затем `powershell -File scripts/deploy-cloudflare.ps1` (из WSL/Linux или после успешного `npm run build:cf`).
+
+**Supabase Auth:** Site URL — ваш `*.pages.dev` или `localhost:3000`; Redirect URLs: `http://localhost:3000/**`, `https://*.pages.dev/**`, `https://*.workers.dev/**`. Скрипт: `scripts/update-supabase-auth-urls.ps1` при наличии `SUPABASE_ACCESS_TOKEN`.
+
 ## Вход
 
 Кнопки Sign in стоят в шапке, в меню телефона и на первом экране. Они открывают вход и регистрацию поверх страницы. Коллекция при этом остаётся доступной.
 
-Аккаунт хранится в localStorage:
-
-- `victoria-boiker-accounts` — имя, почта и пароль
-- `victoria-boiker-session` — текущая сессия
-
-Пароль не короче 8 символов. Заказ оформляется только после входа. Sign out в меню снимает сессию. В другом браузере аккаунт нужно создать заново.
+Вход идёт через Supabase Auth. Имя хранится в `gallery_profiles`, заказ — в `gallery_orders`. Заявка на просмотр пишется в `gallery_viewings`. Владелец галереи видит все заказы и заявки на странице `/desk`. Остальные читают только свой заказ. Пароль не короче 8 символов. Если проект требует подтверждение почты, письмо приходит до входа. Sign out снимает сессию Supabase.
 
 ## Чат
 
@@ -38,7 +52,7 @@ npx next dev -p 3001
 
 ## Корзина
 
-У каждой работы есть цена и кнопка Add to cart. Корзина открывается из шапки. Заказ сохраняется в этом браузере (`victoria-boiker-orders`) и получает номер. Оплата на сайте не списывается: галерея подтверждает её отдельно.
+У каждой работы есть цена и кнопка Add to cart. Корзина открывается из шапки. Заказ записывается в Supabase и получает номер. Оплата на сайте не списывается: галерея подтверждает её отдельно.
 
 ## Коллекция
 

@@ -1,3 +1,5 @@
+export const runtime = "edge";
+
 import { artworks } from "@/data/artworks";
 import { galleryReply, type ChatTurn } from "@/lib/galleryConcierge";
 import { formatPrice } from "@/lib/money";

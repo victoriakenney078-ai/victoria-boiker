@@ -1,12 +1,14 @@
 "use client";
 
 import { AuthScreen } from "@/components/AuthScreen";
-import { clearSession, readSession } from "@/lib/auth";
+import { clearSession, watchSession } from "@/lib/auth";
+import { supabase } from "@/lib/supabase";
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
 type AuthValue = {
   email: string | null;
   ready: boolean;
+  isOwner: boolean;
   signOut: () => void;
   openSignIn: () => void;
   closeSignIn: () => void;
@@ -25,12 +27,34 @@ export function useAuth() {
 export function AuthGate({ children }: { children: ReactNode }) {
   const [email, setEmail] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
+  const [isOwner, setIsOwner] = useState(false);
   const [signInOpen, setSignInOpen] = useState(false);
 
   useEffect(() => {
-    setEmail(readSession());
-    setReady(true);
+    const stop = watchSession((next) => {
+      setEmail(next);
+      setReady(true);
+    });
+    return stop;
   }, []);
+
+  useEffect(() => {
+    if (!email) {
+      setIsOwner(false);
+      return;
+    }
+    let active = true;
+    supabase
+      .from("gallery_staff")
+      .select("user_id")
+      .maybeSingle()
+      .then(({ data }) => {
+        if (active) setIsOwner(Boolean(data));
+      });
+    return () => {
+      active = false;
+    };
+  }, [email]);
 
   useEffect(() => {
     if (!signInOpen) return;
@@ -51,9 +75,11 @@ export function AuthGate({ children }: { children: ReactNode }) {
       value={{
         email,
         ready,
+        isOwner,
         signOut: () => {
-          clearSession();
+          void clearSession();
           setEmail(null);
+          setIsOwner(false);
         },
         openSignIn: () => setSignInOpen(true),
         closeSignIn: () => setSignInOpen(false),

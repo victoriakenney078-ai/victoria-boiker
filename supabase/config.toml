@@ -1,0 +1,13 @@
+# Reference for Supabase CLI. Hosted Auth URLs are also set via scripts/update-supabase-auth-urls.ps1
+# or Dashboard → Authentication → URL Configuration.
+
+project_id = "cewjpjzuuvyudbtwzhxy"
+
+[auth]
+site_url = "http://localhost:3000"
+additional_redirect_urls = [
+  "http://localhost:3000/**",
+  "http://localhost:3001/**",
+  "https://*.pages.dev/**",
+  "https://*.workers.dev/**",
+]

@@ -9,9 +9,9 @@ import { useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 const links = [
-  { href: "#collection", label: "The Collection" },
-  { href: "#provenance", label: "Provenance" },
-  { href: "#advisory", label: "Advisory" },
+  { href: "/#collection", label: "The Collection" },
+  { href: "/#provenance", label: "Provenance" },
+  { href: "/#advisory", label: "Advisory" },
 ];
 
 const focusable =
@@ -19,7 +19,7 @@ const focusable =
 
 export function Navbar() {
   const { selectedId } = useGallery();
-  const { email, ready, signOut, openSignIn } = useAuth();
+  const { email, ready, isOwner, signOut, openSignIn } = useAuth();
   const { count, setOpen: setCartOpen } = useCart();
   const reduce = useReducedMotion();
   const [open, setOpen] = useState(false);
@@ -78,7 +78,7 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-40 border-b border-hairline bg-navy/85 backdrop-blur-md">
       <div className="mx-auto flex max-w-salon flex-wrap items-center justify-between gap-x-6 gap-y-3 px-5 py-4 sm:px-8 lg:px-14">
-        <a href="#top" className="min-w-0">
+        <a href="/" className="min-w-0">
           <span className="block font-display text-[1.15rem] font-medium leading-none tracking-[-0.025em] text-parchment sm:text-[1.35rem]">
             VICTORIA BOIKER
           </span>
@@ -96,6 +96,14 @@ export function Navbar() {
               {link.label}
             </a>
           ))}
+          {isOwner ? (
+            <a
+              href="/desk"
+              className="font-sans text-[11px] uppercase tracking-[0.22em] text-parchment transition-colors duration-700 ease-salon hover:text-brass"
+            >
+              Orders
+            </a>
+          ) : null}
           {ready && email ? (
             <button
               type="button"
@@ -121,7 +129,7 @@ export function Navbar() {
             Cart{count > 0 ? ` ${count}` : ""}
           </button>
           <a
-            href="#advisory"
+            href="/#advisory"
             className="border border-brass px-4 py-2 font-sans text-[11px] uppercase tracking-[0.22em] text-parchment transition-colors duration-700 ease-salon hover:bg-mahogany-mid"
           >
             Private Viewing
@@ -193,6 +201,15 @@ export function Navbar() {
               </a>
             ))}
           </nav>
+          {isOwner ? (
+            <a
+              href="/desk"
+              onClick={() => setOpen(false)}
+              className="mt-10 w-fit font-sans text-[11px] uppercase tracking-[0.22em] text-parchment"
+            >
+              Orders
+            </a>
+          ) : null}
           {ready && email ? (
             <button
               type="button"
@@ -227,7 +244,7 @@ export function Navbar() {
             Cart{count > 0 ? ` ${count}` : ""}
           </button>
           <a
-            href="#advisory"
+            href="/#advisory"
             onClick={() => setOpen(false)}
             className="mt-auto inline-flex w-fit border border-brass px-5 py-3 font-sans text-[11px] uppercase tracking-[0.22em] text-parchment"
           >

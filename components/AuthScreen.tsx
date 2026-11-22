@@ -25,6 +25,7 @@ export function AuthScreen({ onEnter }: { onEnter: (email: string) => void }) {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [errors, setErrors] = useState<Errors>({});
+  const [pending, setPending] = useState(false);
 
   function switchMode(next: Mode) {
     setMode(next);
@@ -33,8 +34,9 @@ export function AuthScreen({ onEnter }: { onEnter: (email: string) => void }) {
     setConfirm("");
   }
 
-  function onSubmit(event: FormEvent<HTMLFormElement>) {
+  async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (pending) return;
     const next: Errors = {};
     if (mode === "register" && !name.trim()) next.name = "A name is required.";
     if (!emailPattern.test(email.trim())) next.email = "A complete email address is required.";
@@ -54,24 +56,37 @@ export function AuthScreen({ onEnter }: { onEnter: (email: string) => void }) {
       return;
     }
 
-    if (mode === "register") {
-      const result = registerAccount({ name, email, password });
+    setPending(true);
+    try {
+      if (mode === "register") {
+        const result = await registerAccount({ name, email, password });
+        if (!result.ok && result.reason === "exists") {
+          setErrors({ email: "This email is already registered. Sign in instead." });
+          document.getElementById("auth-email")?.focus();
+          return;
+        }
+        if (!result.ok && result.reason === "confirm") {
+          setErrors({ form: "Confirm the email from Supabase, then sign in." });
+          return;
+        }
+        if (!result.ok) {
+          setErrors({ form: "The account could not be created." });
+          return;
+        }
+        onEnter(result.email);
+        return;
+      }
+
+      const result = await signInAccount(email, password);
       if (!result.ok) {
-        setErrors({ email: "This email is already registered. Sign in instead." });
+        setErrors({ form: "The email or the password is not recognised." });
         document.getElementById("auth-email")?.focus();
         return;
       }
-      onEnter(email.trim().toLowerCase());
-      return;
+      onEnter(result.email);
+    } finally {
+      setPending(false);
     }
-
-    const result = signInAccount(email, password);
-    if (!result.ok) {
-      setErrors({ form: "The email or the password is not recognised." });
-      document.getElementById("auth-email")?.focus();
-      return;
-    }
-    onEnter(result.email);
   }
 
   return (
@@ -85,7 +100,7 @@ export function AuthScreen({ onEnter }: { onEnter: (email: string) => void }) {
           {mode === "sign-in" ? "Enter the gallery" : "Request a name"}
         </h1>
         <p className="mt-5 font-sans text-[15px] font-light leading-7 text-ink">
-          Sign in to place an order. The account stays in this browser.
+          Sign in to place an order. The account is kept in Supabase.
         </p>
         <div className="mt-10 flex gap-8" role="tablist" aria-label="Account">
           {(
@@ -198,7 +213,8 @@ export function AuthScreen({ onEnter }: { onEnter: (email: string) => void }) {
           ) : null}
           <button
             type="submit"
-            className="mt-2 w-fit border border-brass px-5 py-3 font-sans text-[11px] uppercase tracking-[0.22em] text-parchment transition-colors duration-700 ease-salon hover:bg-mahogany"
+            disabled={pending}
+            className="mt-2 w-fit border border-brass px-5 py-3 font-sans text-[11px] uppercase tracking-[0.22em] text-parchment transition-colors duration-700 ease-salon hover:bg-mahogany disabled:opacity-40"
           >
             {mode === "sign-in" ? "Sign in" : "Create account"}
           </button>

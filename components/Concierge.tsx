@@ -2,6 +2,7 @@
 
 import { useGallery } from "@/components/GalleryContext";
 import { artworks, getArtwork } from "@/data/artworks";
+import { supabase } from "@/lib/supabase";
 import { FormEvent, useEffect, useState } from "react";
 
 type Meeting = "" | "in-person" | "correspondence" | "either";
@@ -23,14 +24,17 @@ export function Concierge() {
   const [meeting, setMeeting] = useState<Meeting>("");
   const [note, setNote] = useState("");
   const [errors, setErrors] = useState<Errors>({});
+  const [formError, setFormError] = useState("");
+  const [pending, setPending] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
 
   useEffect(() => {
     setConfirmed(false);
   }, [dossierNonce]);
 
-  function onSubmit(event: FormEvent<HTMLFormElement>) {
+  async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (pending) return;
     const next: Errors = {};
     if (!name.trim()) next.name = "A name is required.";
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
@@ -49,6 +53,22 @@ export function Concierge() {
       };
       const first = order.find((id) => next[map[id]]);
       if (first) document.getElementById(first)?.focus();
+      return;
+    }
+    setPending(true);
+    setFormError("");
+    const { data: sessionData } = await supabase.auth.getSession();
+    const { error } = await supabase.from("gallery_viewings").insert({
+      user_id: sessionData.session?.user.id ?? null,
+      full_name: name.trim(),
+      email: email.trim(),
+      meeting,
+      artwork_id: interestId,
+      note: note.trim(),
+    });
+    setPending(false);
+    if (error) {
+      setFormError("The note could not be sent. Try again.");
       return;
     }
     setConfirmed(true);
@@ -88,6 +108,7 @@ export function Concierge() {
                   setMeeting("");
                   setNote("");
                   setErrors({});
+                  setFormError("");
                 }}
                 className="mt-10 border border-mahogany px-5 py-3 font-sans text-[11px] uppercase tracking-[0.22em] text-navy"
               >
@@ -191,9 +212,11 @@ export function Concierge() {
                   className={`${fieldClass} resize-none`}
                 />
               </label>
+              {formError ? <p className="font-sans text-[12px] text-mahogany">{formError}</p> : null}
               <button
                 type="submit"
-                className="mt-2 w-fit border border-navy px-6 py-3 font-sans text-[11px] uppercase tracking-[0.22em] text-navy transition-colors duration-700 ease-salon hover:bg-navy hover:text-parchment"
+                disabled={pending}
+                className="mt-2 w-fit border border-navy px-6 py-3 font-sans text-[11px] uppercase tracking-[0.22em] text-navy transition-colors duration-700 ease-salon hover:bg-navy hover:text-parchment disabled:opacity-40"
               >
                 Request the appointment
               </button>

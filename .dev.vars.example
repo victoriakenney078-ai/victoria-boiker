@@ -1,0 +1,7 @@
+# Copy to .dev.vars for local wrangler pages dev (gitignored).
+# Set the same keys in Cloudflare dashboard → Workers & Pages → victoria-boiker → Settings → Variables.
+
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+# XAI_API_KEY=
+# OPENAI_API_KEY=
