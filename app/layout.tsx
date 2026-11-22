@@ -25,6 +25,7 @@ export const metadata: Metadata = {
   title: "Victoria Boiker — Unique Art",
   description:
     "A private gallery for collectors who look beyond the surface of the canvas. Viewing by appointment.",
+  icons: { icon: "/icon.svg" },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
