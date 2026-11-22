@@ -76,7 +76,7 @@ export function Navbar() {
   }, [open]);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-hairline bg-navy/85 backdrop-blur-md">
+    <header className="sticky top-0 z-40 border-b border-hairline bg-navy">
       <div className="mx-auto flex max-w-salon flex-wrap items-center justify-between gap-x-6 gap-y-3 px-5 py-4 sm:px-8 lg:px-14">
         <a href="/" className="min-w-0">
           <span className="block font-display text-[1.15rem] font-medium leading-none tracking-[-0.025em] text-parchment sm:text-[1.35rem]">

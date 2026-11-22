@@ -120,9 +120,9 @@ export function RoomView() {
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className="flex h-full flex-col bg-navy lg:flex-row"
+        className="flex h-full min-h-0 flex-col overflow-y-auto bg-navy lg:flex-row lg:overflow-hidden"
       >
-        <div className="relative min-h-0 flex-1">
+        <div className="relative min-h-[52vh] w-full min-w-0 flex-1 lg:min-h-0">
           <div
             className="absolute inset-0 bg-cover"
             style={{ backgroundImage: `url(${setting.image})`, backgroundPosition: setting.focus }}

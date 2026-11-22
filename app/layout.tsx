@@ -30,8 +30,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${display.variable} ${sans.variable}`}>
-      <body className="overflow-x-hidden bg-navy font-sans text-ink antialiased">
+    <html lang="en" className={`${display.variable} ${sans.variable} overflow-x-clip`}>
+      <body className="overflow-x-clip bg-navy font-sans text-ink antialiased">
         <Grain />
         <AuthGate>
           <CartProvider>

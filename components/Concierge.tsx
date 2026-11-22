@@ -78,7 +78,7 @@ export function Concierge() {
 
   return (
     <section id="advisory" className="scroll-mt-24 bg-parchment text-navy">
-      <div className="mx-auto grid max-w-salon gap-14 px-5 py-20 sm:px-8 lg:grid-cols-12 lg:px-14 lg:py-28">
+      <div className="mx-auto grid max-w-salon grid-cols-1 gap-14 px-5 py-20 sm:px-8 lg:grid-cols-12 lg:px-14 lg:py-28">
         <div className="lg:col-span-4">
           <p className="font-sans text-[11px] uppercase tracking-[0.22em] text-mahogany">Advisory</p>
           <h2 className="mt-4 font-display text-5xl font-light leading-[0.95] tracking-[-0.025em] md:text-6xl">

@@ -9,7 +9,7 @@ export function Provenance() {
   return (
     <section id="provenance" className="scroll-mt-24 border-t border-hairline bg-navy">
       <motion.div
-        className="mx-auto grid max-w-salon gap-12 px-5 py-20 sm:px-8 lg:grid-cols-12 lg:px-14 lg:py-28"
+        className="mx-auto grid max-w-salon grid-cols-1 gap-12 px-5 py-20 sm:px-8 lg:grid-cols-12 lg:px-14 lg:py-28"
         initial={reduce ? { opacity: 0 } : { opacity: 0, y: 24 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "0px 0px -10% 0px" }}
