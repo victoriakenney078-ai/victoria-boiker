@@ -11,26 +11,57 @@ const rooms = [
   {
     id: "salon",
     label: "The Salon",
-    wall: "linear-gradient(180deg, #e4d8c6 0%, #cbbba4 72%, #c3b199 100%)",
-    floor: "linear-gradient(180deg, #5a4032 0%, #2c1e16 100%)",
-    trim: "#9a8464",
-    seat: "#3b281e",
+    image: "/rooms/salon.jpg",
+    focus: "center 42%",
+    trim: "#c4b49a",
+    frame: "#2a241c",
+    artTop: "12%",
+    artLeft: "50%",
+    widthScale: 0.82,
   },
   {
     id: "study",
     label: "The Study",
-    wall: "linear-gradient(180deg, #243044 0%, #151d2c 78%, #121826 100%)",
-    floor: "linear-gradient(180deg, #1c140f 0%, #0b0908 100%)",
-    trim: "#9a8464",
-    seat: "#0e121b",
+    image: "/rooms/study.jpg",
+    focus: "center 38%",
+    trim: "#d7c4a2",
+    frame: "#1a1612",
+    artTop: "14%",
+    artLeft: "44%",
+    widthScale: 0.7,
   },
   {
     id: "daylight",
     label: "Daylight",
-    wall: "linear-gradient(180deg, #f3efe6 0%, #e3dcd0 70%, #ddd4c6 100%)",
-    floor: "linear-gradient(180deg, #d7c3a4 0%, #b89a74 100%)",
+    image: "/rooms/daylight.jpg",
+    focus: "center center",
     trim: "#8d7350",
-    seat: "#efe8dc",
+    frame: "#3a3026",
+    artTop: "14%",
+    artLeft: "50%",
+    widthScale: 0.88,
+  },
+  {
+    id: "loft",
+    label: "Loft",
+    image: "/rooms/loft.jpg",
+    focus: "center center",
+    trim: "#8a8178",
+    frame: "#1c1a18",
+    artTop: "13%",
+    artLeft: "56%",
+    widthScale: 0.8,
+  },
+  {
+    id: "white-cube",
+    label: "White Cube",
+    image: "/rooms/white-cube.jpg",
+    focus: "center center",
+    trim: "#d9d4cc",
+    frame: "#111111",
+    artTop: "15%",
+    artLeft: "50%",
+    widthScale: 0.76,
   },
 ] as const;
 
@@ -76,7 +107,7 @@ export function RoomView() {
   const factor = scales.find((item) => item.id === scale)?.value ?? 1;
   const shaped = /round|oval/i.test(work.dimensionsCm);
   const base = work.aspectRatio > 1.05 ? 34 : work.aspectRatio < 0.8 ? 18 : 24;
-  const width = Math.min(base * factor, 46);
+  const width = Math.min(base * factor * setting.widthScale, 46);
 
   return (
     <motion.div
@@ -92,31 +123,19 @@ export function RoomView() {
         className="flex h-full flex-col bg-navy lg:flex-row"
       >
         <div className="relative min-h-0 flex-1">
-          <div className="absolute inset-0" style={{ background: setting.wall }} />
-          <div className="absolute inset-x-0 bottom-0 h-[32%]" style={{ background: setting.floor }} />
-          <div className="absolute inset-x-0 bottom-[32%] h-2" style={{ background: setting.trim }} />
           <div
-            className="absolute bottom-[32%] left-[7%] h-[16%] w-[30%]"
-            style={{ background: setting.seat, boxShadow: "0 18px 30px rgba(11,19,32,0.18)" }}
+            className="absolute inset-0 bg-cover"
+            style={{ backgroundImage: `url(${setting.image})`, backgroundPosition: setting.focus }}
           />
           <div
-            className="absolute bottom-[32%] right-[9%] h-[22%] w-[7%]"
-            style={{ background: setting.seat, opacity: 0.9 }}
-          />
-          <div
-            className="absolute left-1/2 top-[14%] -translate-x-1/2"
-            style={{ width: `${width}%` }}
+            className="absolute -translate-x-1/2"
+            style={{ width: `${width}%`, top: setting.artTop, left: setting.artLeft }}
           >
-            <div
-              aria-hidden="true"
-              className="mx-auto mb-2 h-1 w-2/5"
-              style={{ background: setting.trim, opacity: 0.7 }}
-            />
             <div
               className={shaped ? "" : "border p-[2.5%]"}
               style={{
                 borderColor: setting.trim,
-                background: shaped ? "transparent" : "#2c1e16",
+                background: shaped ? "transparent" : setting.frame,
                 boxShadow: "0 22px 40px rgba(11,19,32,0.28)",
               }}
             >
@@ -152,7 +171,7 @@ export function RoomView() {
             </button>
           </div>
           <p className="mt-4 font-sans text-sm font-light leading-6 text-ink">
-            The same work, hung on three walls. The size changes only the preview.
+            The same work, hung in five interiors. The size changes only the preview.
           </p>
           <p className="mt-8 font-sans text-[11px] uppercase tracking-[0.22em] text-brass">Room</p>
           <div className="mt-3 flex flex-wrap gap-3">
