@@ -4,7 +4,7 @@ import type { FrameStyle } from "@/data/artworks";
 import { salonEase } from "@/lib/motion";
 import { useReducedMotion } from "framer-motion";
 import Image from "next/image";
-import { useId, useState } from "react";
+import { useId, useRef, useState } from "react";
 
 export type ArtworkCanvasSlotProps = {
   id: string;
@@ -20,6 +20,7 @@ export type ArtworkCanvasSlotProps = {
   priority?: boolean;
   sizes?: string;
   maxHeight?: string;
+  hoverVideoUrl?: string;
 };
 
 type LightAngle = "north" | "raking" | "east";
@@ -58,12 +59,36 @@ export function ArtworkCanvasSlot({
   priority = false,
   sizes = "(min-width: 1280px) 36vw, (min-width: 768px) 46vw, 92vw",
   maxHeight,
+  hoverVideoUrl,
 }: ArtworkCanvasSlotProps) {
   const reduce = useReducedMotion();
   const instance = useId().replace(/:/g, "");
   const [zoom, setZoom] = useState(1);
   const [angle, setAngle] = useState<LightAngle>("north");
+  const [hovering, setHovering] = useState(false);
+  const hoverVideoRef = useRef<HTMLVideoElement>(null);
   const motion = reduce ? "none" : `transform 0.7s cubic-bezier(${salonEase.join(",")})`;
+  const fadeMotion = reduce ? "none" : `opacity 0.9s cubic-bezier(${salonEase.join(",")})`;
+  const showHoverVideo = Boolean(hoverVideoUrl && !interactiveMode && !reduce);
+
+  const handleStageEnter = () => {
+    if (!showHoverVideo) return;
+    setHovering(true);
+    const video = hoverVideoRef.current;
+    if (!video) return;
+    void video.play().catch(() => {
+      /* ignored if the asset is missing or autoplay is blocked */
+    });
+  };
+
+  const handleStageLeave = () => {
+    if (!showHoverVideo) return;
+    setHovering(false);
+    const video = hoverVideoRef.current;
+    if (!video) return;
+    video.pause();
+    video.currentTime = 0;
+  };
 
   return (
     <div
@@ -81,6 +106,8 @@ export function ArtworkCanvasSlot({
           aspectRatio,
           maxHeight: interactiveMode ? "calc(100vh - 8rem)" : maxHeight,
         }}
+        onMouseEnter={showHoverVideo ? handleStageEnter : undefined}
+        onMouseLeave={showHoverVideo ? handleStageLeave : undefined}
       >
         <Image
           src={textureUrl}
@@ -95,6 +122,19 @@ export function ArtworkCanvasSlot({
             transition: motion,
           }}
         />
+        {showHoverVideo ? (
+          <video
+            ref={hoverVideoRef}
+            src={hoverVideoUrl}
+            muted
+            loop
+            playsInline
+            preload="none"
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
+            style={{ opacity: hovering ? 1 : 0, transition: fadeMotion }}
+          />
+        ) : null}
         {interactiveMode ? (
           <div
             aria-hidden="true"

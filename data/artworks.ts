@@ -18,6 +18,8 @@ export type Artwork = {
   category: ArtworkCategory;
   price: number;
   textureUrl: string;
+  /** Loop MP4 in public/artworks; plays on catalog card hover only */
+  hoverVideoUrl?: string;
   frameStyle: FrameStyle;
   aspectRatio: number;
   provenance: ProvenanceLine[];
@@ -37,6 +39,7 @@ export const artworks: Artwork[] = [
     category: "horses",
     price: 18000,
     textureUrl: "/artworks/golden-descent.jpg",
+    hoverVideoUrl: "/artworks/golden-descent-hover.mp4",
     frameStyle: "mahogany",
     aspectRatio: 692 / 1024,
     provenance: [
@@ -58,6 +61,7 @@ export const artworks: Artwork[] = [
     category: "horses",
     price: 14500,
     textureUrl: "/artworks/winged-horse.jpg",
+    hoverVideoUrl: "/artworks/winged-horse-hover.mp4",
     frameStyle: "ebonized",
     aspectRatio: 980 / 1024,
     provenance: [
@@ -78,6 +82,7 @@ export const artworks: Artwork[] = [
     category: "portraits",
     price: 16000,
     textureUrl: "/artworks/green-eye.jpg",
+    hoverVideoUrl: "/artworks/green-eye-hover.mp4",
     frameStyle: "brass",
     aspectRatio: 533 / 1024,
     provenance: [
@@ -98,6 +103,7 @@ export const artworks: Artwork[] = [
     category: "horses",
     price: 12500,
     textureUrl: "/artworks/horse-and-ships.jpg",
+    hoverVideoUrl: "/artworks/horse-and-ships-hover.mp4",
     frameStyle: "mahogany",
     aspectRatio: 809 / 1024,
     provenance: [
@@ -118,6 +124,7 @@ export const artworks: Artwork[] = [
     category: "portraits",
     price: 9800,
     textureUrl: "/artworks/two-faces.png",
+    hoverVideoUrl: "/artworks/two-faces-hover.mp4",
     frameStyle: "ebonized",
     aspectRatio: 1,
     provenance: [
@@ -138,6 +145,7 @@ export const artworks: Artwork[] = [
     category: "portraits",
     price: 11200,
     textureUrl: "/artworks/the-profile.png",
+    hoverVideoUrl: "/artworks/the-profile-hover.mp4",
     frameStyle: "brass",
     aspectRatio: 659 / 998,
     provenance: [
@@ -158,6 +166,7 @@ export const artworks: Artwork[] = [
     category: "scenes",
     price: 8600,
     textureUrl: "/artworks/the-walk.png",
+    hoverVideoUrl: "/artworks/the-walk-hover.mp4",
     frameStyle: "mahogany",
     aspectRatio: 1,
     provenance: [

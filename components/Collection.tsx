@@ -88,9 +88,8 @@ export function Collection() {
             return (
               <motion.article
                 key={work.id}
-                initial={reduce ? { opacity: 0 } : { opacity: 0, y: 32 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "0px 0px -8% 0px" }}
+                initial={reduce ? false : { opacity: 0, y: 32 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={salonTransition(reduce, Math.min(index * 0.08, 0.4))}
                 className={`group flex flex-col border p-5 sm:p-7 md:col-span-1 ${spans[index % spans.length]} ${
                   light ? "border-mahogany/20 bg-parchment text-navy" : "border-hairline bg-navy-elevated text-parchment"
@@ -99,11 +98,17 @@ export function Collection() {
                 <p className={`font-sans text-[11px] uppercase tracking-[0.22em] ${light ? "text-mahogany" : "text-brass"}`}>
                   No. {catalog}
                 </p>
-                <button
-                  type="button"
-                  className="mt-4 block w-full text-left"
+                <div
+                  role="button"
+                  tabIndex={0}
+                  className="mt-4 block w-full cursor-pointer text-left"
                   aria-label={`Inspect ${work.title} in 3D`}
                   onClick={(event) => openInspection(work.id, event.currentTarget)}
+                  onKeyDown={(event) => {
+                    if (event.key !== "Enter" && event.key !== " ") return;
+                    event.preventDefault();
+                    openInspection(work.id, event.currentTarget);
+                  }}
                 >
                   <ArtworkCanvasSlot
                     id={work.id}
@@ -115,8 +120,9 @@ export function Collection() {
                     textureUrl={work.textureUrl}
                     frameStyle={work.frameStyle}
                     aspectRatio={work.aspectRatio}
+                    hoverVideoUrl={work.hoverVideoUrl}
                   />
-                </button>
+                </div>
                 <div className="mt-6 flex flex-1 flex-col">
                   <h3 className="font-sans text-[12px] uppercase tracking-[0.22em]">{work.artist}</h3>
                   <p className="mt-3 font-display text-4xl font-light italic leading-none tracking-[-0.025em]">
